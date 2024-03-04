@@ -4,10 +4,12 @@ const fs = require("fs");
 const chirpFile = path.join(__dirname, "/chirps.json");
 
 const chirps = [
-	"this is a chirp",
-	"here a chirp",
-	"there a chirp",
-	"we get the point",
+	{
+		chirp: "this is a chirp",
+		chirp: "here a chirp",
+		chirp: "there a chirp",
+		chirp: "we get the point",
+	},
 ];
 
 fs.writeFile(chirpFile, JSON.stringify(chirps), (err) => {

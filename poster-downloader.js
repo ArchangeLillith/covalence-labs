@@ -2,7 +2,6 @@ const path = require("path");
 const fs = require("fs");
 const https = require("https");
 const axios = require("axios");
-const { promiseHooks } = require("v8");
 
 const file = fs.createWriteStream("file.jpg");
 
@@ -18,7 +17,7 @@ async function writeBanner(urls) {
 
 		const bannerUrl = url.url;
 		const response = await axios({
-			bannerUrl,
+			url: bannerUrl,
 			method: "GET",
 			responseType: "stream",
 			httpsAgent: new https.Agent({ keepAlive: true }),
