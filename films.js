@@ -10,13 +10,14 @@ fetch("https://api-ghibli.herokuapp.com/films")
 	.then((res) => res.json())
 	.then((data) => {
 		data.forEach((film) => {
-			let movie = [];
-			movie.push(film.id);
-			movie.push(film.title);
-			movie.push(film.description);
-			movie.push(film.rt_score);
+			let movie = {
+				id: film.id,
+				title: film.title,
+				description: film.description,
+				rt_score: film.rt_score,
+			};
 			filmArray.push(movie);
-			movie = [];
+			movie = {};
 		});
 		console.log(filmArray);
 		fs.writeFile(filmsFile, JSON.stringify(filmArray), (err) => {

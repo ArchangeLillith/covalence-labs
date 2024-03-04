@@ -34,7 +34,10 @@ async function writeBanner(urls) {
 
 fetch("https://api-ghibli.herokuapp.com/films")
 	.then((res) => res.json())
-	.then((data) => {
+	.then((data, err) => {
+		if (err) {
+			console.log(err);
+		}
 		const urls = [];
 		data.forEach((film) => {
 			urls.push({ url: film.movie_banner, title: film.title });
