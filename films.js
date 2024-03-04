@@ -1,9 +1,11 @@
 const path = require("path");
 const fs = require("fs");
+const fetch = require("node-fetch");
 
 const filmsFile = path.join(__dirname, "./films.json");
 
 const filmArray = [];
+
 fetch("https://api-ghibli.herokuapp.com/films")
 	.then((res) => res.json())
 	.then((data) => {
