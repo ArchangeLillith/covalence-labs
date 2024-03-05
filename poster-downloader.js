@@ -5,42 +5,37 @@ const axios = require("axios");
 
 const file = fs.createWriteStream("file.jpg");
 
-//Could be funky ordering. If ordering matters, pass in an array and await each thing. This way is more performant
-async function writeBanner(urls) {
-	for (let url of urls) {
-		const downloadFolder = path.join(
-			__dirname,
-			"/downloads",
-			`${url.title}.jpg`
-		);
-		const writer = fs.createWriteStream(downloadFolder);
+async function downloadBanner(url, title) {
+	const downloadFolder = path.join(__dirname, "/downloads", `${title}.jpg`);
+	const writer = fs.createWriteStream(downloadFolder);
 
-		const bannerUrl = url.url;
+	try {
 		const response = await axios({
-			url: bannerUrl,
+			url: url,
 			method: "GET",
 			responseType: "stream",
+			timeout: 100000,
 			httpsAgent: new https.Agent({ keepAlive: true }),
 		});
 
 		response.data.pipe(writer);
-
-		return new Promise((resolve, reject) => {
+		await new Promise((resolve, reject) => {
 			writer.on("finish", resolve);
-			writer.on("reject", reject);
+			writer.on("error", reject);
 		});
+		console.log(`${title} banner downloaded successfully.`);
+	} catch (error) {
+		console.error(`Error downloading ${title} banner:`, error);
 	}
 }
 
-fetch("https://api-ghibli.herokuapp.com/films")
-	.then((res) => res.json())
-	.then((data, err) => {
-		if (err) {
-			console.log(err);
+axios
+	.get("https://api-ghibli.herokuapp.com/films")
+	.then(async (response) => {
+		const data = response.data;
+		for (const film of data) {
+			await downloadBanner(film.movie_banner, film.title);
 		}
-		const urls = [];
-		data.forEach((film) => {
-			urls.push({ url: film.movie_banner, title: film.title });
-		});
-		writeBanner(urls);
-	});
+		console.log("All banners downloaded successfully.");
+	})
+	.catch((err) => console.error(err));
